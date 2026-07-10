@@ -32,7 +32,9 @@
 html { scroll-behavior: smooth; }
 
 body {
+  /* faint paper grain over the cream, then the tinted washes */
   background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.27 0 0 0 0 0.12 0 0 0 0 0.01 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E"),
     radial-gradient(1200px 500px at 85% -5%, rgba(255, 146, 206, .10), transparent 60%),
     radial-gradient(900px 600px at -10% 30%, rgba(22, 99, 73, .05), transparent 55%),
     var(--cream);
@@ -294,6 +296,43 @@ a { color: inherit; text-decoration: none; }
   text-align: center;
   padding-top: 8px;
 }
+/* first-edition stamp, inked over the photo stack */
+.edition-stamp {
+  position: absolute;
+  top: -18px; right: -6px;
+  z-index: 6;
+  width: 118px; height: 118px;
+  border: 2px solid var(--thread);
+  outline: 1px solid var(--thread);
+  outline-offset: 3px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .15rem;
+  text-align: center;
+  transform: rotate(8deg);
+  color: var(--thread);
+  background: color-mix(in srgb, var(--cream) 82%, transparent);
+  opacity: .92;
+}
+.edition-stamp span {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.edition-stamp em {
+  font-style: normal;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
 .polaroid.p1 { top: 0; left: 0; transform: rotate(-6deg); z-index: 1; }
 .polaroid.p2 { top: 10%; right: 0; transform: rotate(5deg); z-index: 2; }
 .polaroid.p3 { bottom: 0; left: 16%; transform: rotate(-2deg); z-index: 3; }
@@ -401,7 +440,7 @@ a { color: inherit; text-decoration: none; }
 .stories {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: clamp(1.25rem, 2.5vw, 2rem);
 }
 
@@ -464,6 +503,17 @@ a { color: inherit; text-decoration: none; }
 .story-price b { font-weight: 700; font-size: 1.1rem; }
 .story-price s { color: var(--ink-soft); opacity: .7; font-size: .9rem; }
 .story-price.light b, .story-price.light s { color: var(--cream); }
+
+/* list price, kept quiet — the price speaks, the discount whispers */
+.story-price .list {
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: .75;
+}
+.story-price.light .list { color: var(--cream); opacity: .7; }
 
 .pill {
   font-size: .68rem;
@@ -550,6 +600,82 @@ a { color: inherit; text-decoration: none; }
 .interlude-card .story-img img { aspect-ratio: 3 / 4; height: 100%; }
 .interlude-card h3 { margin: .3rem 0 .4rem; }
 .interlude-card .story-price { align-self: end; }
+
+/* ---------- hallmarks ---------- */
+
+.hallmarks {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: clamp(3rem, 6vw, 5.5rem) var(--pad);
+  border-top: 3px double var(--border);
+  text-align: center;
+}
+.hallmarks .eyebrow { margin-bottom: .5rem; }
+.hallmarks .section-title { margin-bottom: 2.5rem; }
+
+.hallmark-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(1.5rem, 3vw, 3rem);
+  text-align: left;
+}
+
+.hallmark {
+  border-top: 1px solid var(--border);
+  padding-top: 1.1rem;
+}
+.hallmark-no {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.6rem;
+  color: var(--thread);
+  display: block;
+  margin-bottom: .4rem;
+}
+.hallmark h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin-bottom: .35rem;
+}
+.hallmark p { font-size: .93rem; color: var(--ink-soft); }
+
+/* ---------- folio (editorial plate) ---------- */
+
+.folio {
+  position: relative;
+  min-height: clamp(380px, 55vw, 560px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(rgba(42, 18, 0, .55), rgba(42, 18, 0, .55)),
+    url("../img/box.jpg") center 35% / cover no-repeat;
+}
+.folio-quote {
+  text-align: center;
+  color: var(--cream);
+  padding: 2rem var(--pad);
+}
+.folio-quote p {
+  font-size: clamp(1.7rem, 4.5vw, 3.2rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.3;
+  text-shadow: 0 2px 18px rgba(42, 18, 0, .5);
+}
+.folio-quote cite {
+  display: block;
+  margin-top: 1.25rem;
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
 
 /* ---------- manifesto ---------- */
 
@@ -862,6 +988,11 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 520px) {
   .colophon-grid { grid-template-columns: 1fr; gap: 1.75rem; }
-  .prologue-stack { min-height: 360px; }
+  .prologue-stack { min-height: 380px; }
   .mark-letters { gap: .5rem; }
+  .edition-stamp {
+    width: 96px; height: 96px;
+    top: -12px; right: 0;
+  }
+  .edition-stamp span { font-size: .85rem; }
 }

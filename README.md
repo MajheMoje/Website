@@ -79,6 +79,27 @@ Other story-first moves:
   emotion over trends / culture, not costume" as large editorial lines.
 - **Reviews become "readers"** — ★ 4.8 from 124 readers of chapter one.
 
+### Competitive positioning (vs. "joywear")
+
+Benchmarked against [biglittlepeople.com](https://www.biglittlepeople.com/)
+("India's first joywear brand" — childish socks for adults, ~₹378–1,349,
+discount-led merchandising, playful GIF-heavy Shopify layout). The two brands
+share a category but not a position, and this UI leans into the difference:
+
+- **They sell joy; we sell meaning.** BLP's frame is silliness and whimsy;
+  Majhe Moje's frame is narrative, craft and permanence. The UI therefore reads
+  like a first edition, not a toy store: paper grain, double-rule dividers,
+  Roman numerals, an inked FIRST EDITION stamp.
+- **They discount; we number printings.** BLP leads with "LOWEST IT'LL EVER
+  BE" and struck-through prices. Here the price stands alone and the compare-at
+  price is a quiet small-caps "list ₹750" — the urgency comes from scarcity
+  ("one printing, ever"), not markdowns.
+- **They bundle; we bind volumes.** Their "Joy Bundle" maps to our "collect
+  the chapter" boxed set — a collector's object, not a deal.
+- **Craft receipts.** The Hallmarks section (320 GSM combed cotton, fully made
+  in India, one printing, the hidden mark) gives the premium claim evidence;
+  BLP has no equivalent.
+
 ### What was deliberately kept
 
 The redesign is a re-architecture, not a rebrand. Palette (cream `#FFFCE8`,
