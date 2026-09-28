@@ -6,6 +6,9 @@ A proposed new UI for [majhemoje.in](https://majhemoje.in), designed around one 
 Open `index.html` in a browser — the prototype is fully self-contained (fonts and
 imagery are vendored into `assets/`), so it also works on GitHub Pages as-is.
 
+**New: [`rojnishi.html`](rojnishi.html)**, the everyday line made with Corbel.
+The strategy behind it is in [`STRATEGY.md`](STRATEGY.md).
+
 ---
 
 ## 1. Brand study
@@ -110,14 +113,46 @@ own, taken from the live site.
 
 ---
 
-## 3. Repo layout
+## 3. Rojnishi: the everyday line (× Corbel)
+
+*Majhe moje* means "my socks", so they have to be everyone's. Chapters stay the
+premium first editions ("one printing, ever"). **Rojnishi** (रोजनिशी, Marathi for
+*diary*) is the second shelf: everyday socks for working days, knitted with
+[Corbel](https://www.mycorbel.com/), and **always in print**.
+
+- **Seven entries across one working day**: 05:47 The First Local · 09:00 Shutter
+  Up · 13:00 The Long Walk · 16:00 Cutting Chai · 19:30 The Last Mile · 23:00
+  Night Shift · Sun The Sunday Match. Each one maps to a sock base Corbel already
+  makes.
+- **The Week**: a seven-pair box, one entry per day, packaged like a
+  brown-paper-covered school notebook.
+- **Its own visual code**: ruled notebook paper, a red margin and handwritten
+  timestamps, so it never looks like a Chapter.
+- **The press**: Corbel is credited as the maker, the way a book's colophon
+  names its printer.
+- **Send us your day**: customers submit their working day; chosen entries get
+  knitted and the storyteller is credited on the story card.
+- **Kit the whole shift**: bulk and workforce orders for hospitals, fleets,
+  shops and offices.
+
+The sock artwork (`assets/img/rojnishi/*.svg`) is concept illustration for the
+prototype. Swap it for product photography once samples are knitted. Prices
+(₹349 a pair · ₹899 for three · ₹1,899 The Week) are proposals pending Corbel's
+costings. The forms post to the Shopify contact endpoint, tagged
+`rojnishi-your-day` and `rojnishi-week-reserve`.
+
+## 4. Repo layout
 
 ```
-index.html            the whole redesigned page
+index.html            the redesigned homepage (chapters)
+rojnishi.html         the everyday line × corbel
+STRATEGY.md           rojnishi × corbel strategy
 assets/css/style.css  design system + layout (custom properties up top)
+assets/css/rojnishi.css  notebook-paper system for rojnishi + homepage teaser
 assets/css/fonts.css  self-hosted @font-face (Sansita, Lora, DM Sans, Caveat)
 assets/fonts/         woff2 files (latin + latin-ext)
 assets/img/           product photography from the live store, for the prototype
+assets/img/rojnishi/  concept sock illustrations for the seven entries (svg)
 assets/js/main.js     dependency-free: reading ribbon, scroll reveal, mobile nav
 ```
 

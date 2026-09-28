@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 164" role="img" aria-labelledby="long-walk-t">
+  <title id="long-walk-t">The Long Walk — sand sock with a dashed walking route</title>
+  <defs>
+    <clipPath id="long-walk-c"><path d="M34 8 H80 V92 Q82 102 94 105 L114 110 Q130 114 128 132 Q126 148 108 148 L58 149 Q34 149 34 124 Z"/></clipPath>
+    
+  </defs>
+  <ellipse cx="82" cy="156" rx="50" ry="4.5" fill="#441F03" opacity=".12"/>
+  <g clip-path="url(#long-walk-c)">
+    <rect width="150" height="164" fill="#E3D8B6"/>
+    
+    <path d="M48 26 C72 40 40 58 62 76 S46 116 78 124 S108 118 126 134" fill="none" stroke="#166349" stroke-width="3.2" stroke-dasharray="6 5" stroke-linecap="round"/>
+    <circle cx="48" cy="28" r="4" fill="#E56412"/>
+    <ellipse cx="36" cy="146" rx="28" ry="23" fill="#166349"/>
+    <ellipse cx="132" cy="130" rx="21" ry="26" fill="#166349"/>
+    <rect x="0" y="0" width="150" height="24" fill="#166349"/>
+    <path d="M38 8 V24 M42 8 V24 M46 8 V24 M50 8 V24 M54 8 V24 M58 8 V24 M62 8 V24 M66 8 V24 M70 8 V24 M74 8 V24 M78 8 V24" stroke="#441F03" stroke-opacity=".12" stroke-width="1"/>
+    <rect x="0" y="16" width="150" height="3" fill="#FFFCE8"/>
+  </g>
+  <path d="M34 8 H80 V92 Q82 102 94 105 L114 110 Q130 114 128 132 Q126 148 108 148 L58 149 Q34 149 34 124 Z" fill="none" stroke="#441F03" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>
