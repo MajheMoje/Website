@@ -114,3 +114,4 @@
   .cx-card__actions { grid-template-columns: 1fr; }
   .cx-frames { padding: 28px 16px 0; }
 }
+@media (max-width: 600px) { .cx-card__visual { height: 250px; margin-bottom: 28px; } .cx-card__visual img { width: 56%; } }
