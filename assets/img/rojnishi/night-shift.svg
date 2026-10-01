@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 164" role="img" aria-labelledby="night-shift-t">
+  <title id="night-shift-t">Night Shift — indigo sock with stars and a crescent moon</title>
+  <defs>
+    <clipPath id="night-shift-c"><path d="M34 8 H80 V92 Q82 102 94 105 L114 110 Q130 114 128 132 Q126 148 108 148 L58 149 Q34 149 34 124 Z"/></clipPath>
+    <pattern id="night-shift-p" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="5" cy="6" r="1.2" fill="#FFFCE8"/><circle cx="19" cy="15" r="1" fill="#FFFCE8" opacity=".8"/><circle cx="10" cy="23" r=".9" fill="#FFFCE8" opacity=".7"/>
+      <path d="M22 3 l1 2.4 2.4 1 -2.4 1 -1 2.4 -1 -2.4 -2.4 -1 2.4 -1 Z" fill="#FF92CE"/>
+    </pattern>
+  </defs>
+  <ellipse cx="82" cy="156" rx="50" ry="4.5" fill="#441F03" opacity=".12"/>
+  <g clip-path="url(#night-shift-c)">
+    <rect width="150" height="164" fill="#1E1B3A"/>
+    <rect width="150" height="164" fill="url(#night-shift-p)"/>
+    <circle cx="62" cy="52" r="10" fill="#FFF3C4"/><circle cx="67" cy="48" r="9" fill="#1E1B3A"/>
+    <ellipse cx="36" cy="146" rx="28" ry="23" fill="#2E2A58"/>
+    <ellipse cx="132" cy="130" rx="21" ry="26" fill="#2E2A58"/>
+    <rect x="0" y="0" width="150" height="24" fill="#2E2A58"/>
+    <path d="M38 8 V24 M42 8 V24 M46 8 V24 M50 8 V24 M54 8 V24 M58 8 V24 M62 8 V24 M66 8 V24 M70 8 V24 M74 8 V24 M78 8 V24" stroke="#441F03" stroke-opacity=".12" stroke-width="1"/>
+    <rect x="0" y="16" width="150" height="3" fill="#FF92CE"/>
+  </g>
+  <path d="M34 8 H80 V92 Q82 102 94 105 L114 110 Q130 114 128 132 Q126 148 108 148 L58 149 Q34 149 34 124 Z" fill="none" stroke="#441F03" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>

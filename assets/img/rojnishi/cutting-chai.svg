@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 164" role="img" aria-labelledby="cutting-chai-t">
+  <title id="cutting-chai-t">Cutting Chai — brown sock with small cutting-chai glasses</title>
+  <defs>
+    <clipPath id="cutting-chai-c"><path d="M34 8 H80 V92 Q82 102 94 105 L114 110 Q130 114 128 132 Q126 148 108 148 L58 149 Q34 149 34 124 Z"/></clipPath>
+    <pattern id="cutting-chai-p" width="22" height="24" patternUnits="userSpaceOnUse">
+      <path d="M6.6 12 H15.4 L14.5 19 H7.5 Z" fill="#E8A15C"/>
+      <path d="M6 8 H16 L14.5 19 H7.5 Z" fill="none" stroke="#FFFCE8" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M9.5 6 q1.4 -2 0 -4 M12.8 6 q1.4 -2 0 -4" fill="none" stroke="#FFFCE8" stroke-opacity=".7" stroke-width=".9" stroke-linecap="round"/>
+    </pattern>
+  </defs>
+  <ellipse cx="82" cy="156" rx="50" ry="4.5" fill="#441F03" opacity=".12"/>
+  <g clip-path="url(#cutting-chai-c)">
+    <rect width="150" height="164" fill="#441F03"/>
+    <rect width="150" height="164" fill="url(#cutting-chai-p)"/>
+    
+    <ellipse cx="36" cy="146" rx="28" ry="23" fill="#C9803F"/>
+    <ellipse cx="132" cy="130" rx="21" ry="26" fill="#C9803F"/>
+    <rect x="0" y="0" width="150" height="24" fill="#F5EFC9"/>
+    <path d="M38 8 V24 M42 8 V24 M46 8 V24 M50 8 V24 M54 8 V24 M58 8 V24 M62 8 V24 M66 8 V24 M70 8 V24 M74 8 V24 M78 8 V24" stroke="#441F03" stroke-opacity=".12" stroke-width="1"/>
+    <rect x="0" y="16" width="150" height="3" fill="#441F03"/>
+  </g>
+  <path d="M34 8 H80 V92 Q82 102 94 105 L114 110 Q130 114 128 132 Q126 148 108 148 L58 149 Q34 149 34 124 Z" fill="none" stroke="#441F03" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Everyday Moje | Insert Card</title>
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/live.css">
+  <style>
+    /* A6 insert card, 105 × 148 mm, two faces. Screen: side by side. Print: one face per page. */
+    body { background: #E9E1BF; padding: 40px 20px; }
+    .sheet { display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; }
+    .face-wrap p.label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--mm-muted); margin-bottom: 8px; font-weight: 600; }
+    .face {
+      width: 105mm; height: 148mm; border-radius: 3mm; overflow: hidden; position: relative;
+      box-shadow: 0 18px 40px rgba(68,31,3,.22); display: flex; flex-direction: column;
+    }
+
+    /* front */
+    .front { background: linear-gradient(180deg, #0f4a36 0%, var(--mm-green) 100%); color: var(--mm-cream); padding: 9mm 8mm 7mm; text-align: center; }
+    .front__lock { font-family: var(--mm-font-display); font-style: italic; font-weight: 700; font-size: 11pt; opacity: .85; }
+    .front__lock span { color: var(--mm-orange); font-style: normal; padding: 0 .25em; }
+    .front h1 { font-family: var(--mm-font-display); font-style: italic; font-weight: 900; font-size: 30pt; line-height: .95; margin: 6mm 0 3mm; }
+    .front h1 em { color: var(--mm-pink); }
+    .front__hand { font-family: var(--mm-font-accent); font-size: 15pt; line-height: 1.15; color: var(--mm-cream); opacity: .92; }
+    .qr { margin: 6mm auto 3mm; width: 40mm; background: var(--mm-cream); border-radius: 3mm; padding: 3.5mm; position: relative; }
+    .qr img { width: 100%; }
+    .qr::before, .qr::after { content: ""; position: absolute; width: 7mm; height: 7mm; border: .8mm solid var(--mm-orange); }
+    .qr::before { top: -1.6mm; left: -1.6mm; border-right: 0; border-bottom: 0; border-radius: 1.5mm 0 0 0; }
+    .qr::after { bottom: -1.6mm; right: -1.6mm; border-left: 0; border-top: 0; border-radius: 0 0 1.5mm 0; }
+    .front__does { display: flex; justify-content: center; gap: 3mm; font-size: 7.5pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-top: 2mm; }
+    .front__does span + span::before { content: "◆"; color: var(--mm-orange); margin-right: 3mm; font-size: 6pt; }
+    .front__foot { margin-top: auto; }
+    .front__foot img { height: 11mm; margin: 0 auto; }
+
+    /* back */
+    .back { background: var(--mm-cream); color: var(--mm-brown); padding: 8mm 8mm 6mm; }
+    .back h2 { font-size: 7.5pt; letter-spacing: .16em; text-transform: uppercase; color: var(--mm-orange); font-weight: 700; margin-bottom: 1.5mm; }
+    .back section + section { margin-top: 4.5mm; }
+    .back p, .back li { font-size: 8.5pt; line-height: 1.45; }
+    .size { display: flex; gap: 2mm; }
+    .size div { flex: 1; border: .3mm solid var(--mm-line); border-radius: 2mm; padding: 2mm; text-align: center; }
+    .size b { display: block; font-family: var(--mm-font-display); font-style: italic; font-weight: 800; font-size: 12pt; }
+    .size span { font-size: 7pt; color: var(--mm-muted); }
+    .care { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1mm 3mm; }
+    .care li::before { content: "◆ "; color: var(--mm-orange); font-size: 6pt; vertical-align: 1px; }
+    .code { border: .5mm dashed var(--mm-orange); border-radius: 2.5mm; padding: 3mm; display: flex; align-items: center; gap: 3mm; }
+    .code b { font-family: var(--mm-font-display); font-style: italic; font-weight: 900; font-size: 17pt; color: var(--mm-orange); letter-spacing: .03em; }
+    .code p { font-size: 7.5pt; }
+    .tick { list-style: none; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.2mm 2mm; }
+    .tick li { font-family: var(--mm-font-display); font-style: italic; font-weight: 700; font-size: 8.5pt; display: flex; align-items: center; gap: 1.5mm; }
+    .tick li::before { content: ""; width: 3mm; height: 3mm; border: .35mm solid var(--mm-brown); border-radius: .6mm; flex: 0 0 auto; }
+    .rate { font-family: var(--mm-font-accent); font-size: 15pt; line-height: 1.1; color: var(--mm-brown-soft); transform: rotate(-2deg); }
+    .back__foot { margin-top: auto; border-top: .3mm solid var(--mm-line); padding-top: 2.5mm; font-size: 6.8pt; color: var(--mm-muted); text-align: center; line-height: 1.5; }
+
+    .notes { max-width: 820px; margin: 36px auto 0; font-size: 13px; color: var(--mm-brown-soft); }
+    .notes h3 { font-family: var(--mm-font-display); font-style: italic; font-size: 20px; color: var(--mm-brown); margin-bottom: 6px; }
+    .notes li { margin-left: 18px; }
+
+    @media print {
+      @page { size: 105mm 148mm; margin: 0; }
+      body { background: none; padding: 0; }
+      .sheet { display: block; }
+      .face-wrap p.label, .notes { display: none; }
+      .face { box-shadow: none; border-radius: 0; page-break-after: always; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+
+    <div class="face-wrap">
+      <p class="label">front</p>
+      <div class="face front" id="front">
+        <p class="front__lock">Corbel<span>×</span>Majhe Moje</p>
+        <h1>hi.<br>you&rsquo;ve got <em>moje.</em></h1>
+        <p class="front__hand">this pair came with a story.<br>scan to read it, rate it,<br>and get a little something back.</p>
+        <div class="qr"><img src="assets/img/corbel/qr-card.svg" alt="QR code to majhemoje.in"></div>
+        <p class="front__does"><span>your story</span><span>rate it</span><span>go again</span></p>
+        <div class="front__foot"><img src="assets/img/mm-logo.png" alt="Majhe Moje"></div>
+      </div>
+    </div>
+
+    <div class="face-wrap">
+      <p class="label">back</p>
+      <div class="face back" id="back">
+        <section>
+          <h2>your size</h2>
+          <div class="size">
+            <div><b>UK 6–10</b><span>sets &amp; packs</span></div>
+            <div><b>as marked</b><span>sports singles</span></div>
+          </div>
+        </section>
+        <section>
+          <h2>care, so they last</h2>
+          <ul class="care">
+            <li>cold wash, 30° max</li>
+            <li>turn inside out</li>
+            <li>no bleach</li>
+            <li>dry in the shade</li>
+            <li>skip the tumble dryer</li>
+            <li>never iron the story out</li>
+          </ul>
+        </section>
+        <section>
+          <h2>for next time</h2>
+          <div class="code"><b>MOREMOJE</b><p>10% off your next order at majhemoje.in.<br>valid 60 days. one per customer.</p></div>
+        </section>
+        <section>
+          <h2>tick your story</h2>
+          <ul class="tick">
+            <li>first salary</li><li>fit check</li><li>sunday chai</li>
+            <li>mom packed these</li><li>the run club</li><li>the rotation</li>
+          </ul>
+        </section>
+        <section>
+          <p class="rate">liked them? scan the front and tell us. your ratings decide which stories stay ↷</p>
+        </section>
+        <p class="back__foot">knitted &amp; shipped by corbel · chosen &amp; storied by majhe moje, mumbai<br>studio@majhemoje.in · majhemoje.in</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="notes">
+    <h3>print notes</h3>
+    <ul>
+      <li>A6 (105 × 148 mm), two-sided. Print from the browser with background graphics on; each face prints on its own page.</li>
+      <li>One universal card for every Everyday Moje order. The QR opens the <b>found a card?</b> section of the Everyday Moje page, where the customer picks their story, rates it and sees size, care and the code.</li>
+      <li>QR target: majhemoje.in/pages/everyday-moje?src=card#card. Create that page handle in Shopify before printing. The <i>src=card</i> tag lets you count scans in analytics.</li>
+      <li>To confirm before printing: the size range with Corbel, and the MOREMOJE discount (create it in Shopify with the 60-day limit).</li>
+    </ul>
+  </div>
+</body>
+</html>

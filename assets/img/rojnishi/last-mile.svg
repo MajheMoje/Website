@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 164" role="img" aria-labelledby="last-mile-t">
+  <title id="last-mile-t">The Last Mile — slate sock with rain streaks and a reflective band</title>
+  <defs>
+    <clipPath id="last-mile-c"><path d="M34 8 H80 V92 Q82 102 94 105 L114 110 Q130 114 128 132 Q126 148 108 148 L58 149 Q34 149 34 124 Z"/></clipPath>
+    <pattern id="last-mile-p" width="14" height="16" patternUnits="userSpaceOnUse"><path d="M9 2 L5 11" stroke="#AEB8C6" stroke-width="1.5" stroke-linecap="round"/></pattern>
+  </defs>
+  <ellipse cx="82" cy="156" rx="50" ry="4.5" fill="#441F03" opacity=".12"/>
+  <g clip-path="url(#last-mile-c)">
+    <rect width="150" height="164" fill="#5A6270"/>
+    <rect width="150" height="164" fill="url(#last-mile-p)"/>
+    <rect x="0" y="34" width="150" height="11" fill="#E56412"/><rect x="0" y="38" width="150" height="3" fill="#FFE2C6"/>
+    <ellipse cx="36" cy="146" rx="28" ry="23" fill="#2F3540"/>
+    <ellipse cx="132" cy="130" rx="21" ry="26" fill="#2F3540"/>
+    <rect x="0" y="0" width="150" height="24" fill="#2F3540"/>
+    <path d="M38 8 V24 M42 8 V24 M46 8 V24 M50 8 V24 M54 8 V24 M58 8 V24 M62 8 V24 M66 8 V24 M70 8 V24 M74 8 V24 M78 8 V24" stroke="#441F03" stroke-opacity=".12" stroke-width="1"/>
+    <rect x="0" y="16" width="150" height="3" fill="#E56412"/>
+  </g>
+  <path d="M34 8 H80 V92 Q82 102 94 105 L114 110 Q130 114 128 132 Q126 148 108 148 L58 149 Q34 149 34 124 Z" fill="none" stroke="#441F03" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>
