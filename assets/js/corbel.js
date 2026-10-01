@@ -80,3 +80,30 @@
   overlay.addEventListener("click", function (e) { if (e.target === overlay) close(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
 })();
+
+/* everyday moje: carousel arrows + catalogue filter */
+(function () {
+  "use strict";
+  document.querySelectorAll(".mm-hd__nav-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var track = btn.closest(".mm-hd").querySelector(".mm-hd__scroll");
+      track.scrollBy({ left: Number(btn.getAttribute("data-dir")) * track.clientWidth * 0.8, behavior: "smooth" });
+    });
+  });
+
+  var chips = document.querySelectorAll("[data-cat]");
+  var cards = document.querySelectorAll(".cx-cat-card");
+  var count = document.getElementById("cat-count");
+  chips.forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      var f = chip.getAttribute("data-cat"), shown = 0;
+      chips.forEach(function (c) { c.classList.toggle("is-on", c === chip); });
+      cards.forEach(function (card) {
+        var hit = f === "all" || (" " + card.getAttribute("data-tags") + " ").indexOf(" " + f + " ") > -1;
+        card.hidden = !hit;
+        if (hit) shown++;
+      });
+      if (count) count.textContent = shown;
+    });
+  });
+})();

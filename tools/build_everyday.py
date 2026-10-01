@@ -1,10 +1,14 @@
-"""Build corbel.html from structured bundle and SKU data.
+"""Build everyday.html (Everyday Moje: Corbel × Majhe Moje) from structured data.
+
+Story bundles are curated by hand below. The full catalogue is read from
+data/corbel-products.json (Corbel's public products.json) and sorted into
+shelves using data/corbel-collections.json (Corbel's own collections).
 
 Prices, compare-at prices and "% off" are computed here so every card on the
 page stays consistent. Corbel SKU prices mirror mycorbel.com (price parity);
 bundle compare-at = the sum of the Corbel prices of what's inside.
 
-Run from the repo root:  python3 tools/build_corbel.py
+Run from the repo root:  python3 tools/build_everyday.py
 """
 
 import html
@@ -162,21 +166,163 @@ def marquee(items, cls=""):
     return f'<div class="mm-mq {cls}" aria-hidden="true"><div class="mm-mq__inner">{row}{row}</div></div>'
 
 
+
+# ---------------------------------------------------------------------------
+# full catalogue: every live Corbel product, sorted into shelves and story frames
+# ---------------------------------------------------------------------------
+
+import re
+
+PRODUCTS = json.load(open("data/corbel-products.json"))["products"]
+COLLECTIONS = json.load(open("data/corbel-collections.json"))
+
+SHELF_FROM_COLLECTION = {
+    "sportwear": "sports", "formalwear": "office", "casualwear": "casual",
+    "womens-socks-range": "her", "mens-sock-range": "him",
+    "bamboo-socks": "bamboo", "cotton-socks": "cotton",
+}
+TYPE_SHELF = {"Sports Socks": "sports", "Football Socks": "sports", "Performance Socks": "sports",
+              "Pilates Socks": "sports", "Biker Socks": "sports", "Formal Socks": "office", "Casual Socks": "casual"}
+FRAME_OF_SHELF = {"sports": "becoming", "office": "firsts", "casual": "ghar-se"}
+
+
+def clean_name(t):
+    t = re.sub(r"^Corbel\s+", "", t)
+    t = re.sub(r"\s*[–—|-]\s*Pack of \d+\s*$", "", t)
+    t = re.sub(r"\s*\|\s*Pack of \d+\s*$", "", t)
+    t = re.sub(r"\s*\(Pack of \d+\)\s*$", "", t)
+    t = re.sub(r"\s+Pack of \d+$", "", t)
+    return t.strip()
+
+
+def pack_size(t):
+    m = re.search(r"Pack of (\d+)", t)
+    if m:
+        return int(m.group(1))
+    if "Duo" in t:
+        return 2
+    if "Trio" in t or re.search(r"\b(Set|Edit)\b", t):
+        return 3
+    return 1
+
+
+def catalogue_item(p):
+    v = p["variants"][0]
+    price = round(float(v["price"]))
+    compare = round(float(v["compare_at_price"])) if v.get("compare_at_price") else None
+    tags = {SHELF_FROM_COLLECTION[c] for c, hs in COLLECTIONS.items() if c in SHELF_FROM_COLLECTION and p["handle"] in hs}
+    tags.add(TYPE_SHELF.get(p["product_type"], "casual"))
+    title = p["title"]
+    if "bamboo" in title.lower():
+        tags.add("bamboo")
+    if "cotton" in title.lower():
+        tags.add("cotton")
+    if title.startswith("Women"):
+        tags.add("her"); tags.discard("him")
+    if title.startswith("Men"):
+        tags.add("him")
+    if p["title"] in ("Hearts & Spades", "Sweetheart Stripe", "Strawberry Blossom", "Kitten & Hearts"):
+        tags.add("her")
+    shelf = TYPE_SHELF.get(p["product_type"], "casual")
+    options = [x["title"] for x in p["variants"] if x["title"] != "Default Title"]
+    return {
+        "handle": p["handle"], "name": clean_name(title), "price": price, "compare": compare,
+        "img": p["images"][0]["src"], "tags": sorted(tags), "frame": FRAME_OF_SHELF[shelf],
+        "pairs": pack_size(title), "options": options,
+        "material": "bamboo" if "bamboo" in tags else "cotton" if "cotton" in tags else "",
+    }
+
+
+CATALOGUE = [catalogue_item(p) for p in PRODUCTS if float(p["variants"][0]["price"]) > 0 and p["images"]]
+BY_HANDLE = {c["handle"]: c for c in CATALOGUE}
+BESTSELLERS = [BY_HANDLE[h] for h in COLLECTIONS["corbel-featured-collection"] if h in BY_HANDLE]
+
+
+def sized(url, w):
+    return url + ("&" if "?" in url else "?") + f"width={w}"
+
+
+def catalogue_card(c, cls="mm-hd__card"):
+    data = html.escape(json.dumps({"name": c["name"], "price": rupees(c["price"]), "options": c["options"],
+                                   "label": "pick a colour" if c["options"] else ""}))
+    bits = [c["material"], f"pack of {c['pairs']}" if c["pairs"] > 1 else "single pair"]
+    if "her" in c["tags"]:
+        bits.append("for her")
+    meta = " · ".join(b for b in bits if b)
+    return f'''
+          <div class="{cls}" data-tags="{' '.join(c['tags'] + [c['frame']])}">
+            <div class="mm-hd__img mm-hd__img--packshot">
+              {badge(c["price"], c["compare"])}
+              <img src="{sized(c["img"], 500)}" alt="{html.escape(c["name"])}" loading="lazy">
+            </div>
+            <div class="mm-hd__body">
+              <p class="mm-hd__chapter">{meta}</p>
+              <h3 class="mm-hd__name">{html.escape(c["name"])}</h3>
+              {price_row(c["price"], c["compare"])}
+              <button class="mm-hd__atc" type="button" data-product="{data}">add to bag</button>
+            </div>
+          </div>'''
+
+
+def carousel(section_id, eyebrow, title, sub, items, colour="#E56412", link=("see all in the catalogue →", "#catalogue")):
+    return f'''
+    <section class="mm-hd cx-shelf" id="{section_id}" style="--c:{colour}">
+      <div class="mm-hd__head">
+        <div>
+          <p class="mm-eyebrow" style="color:{colour}">{eyebrow}</p>
+          <h2 class="mm-title">{title}</h2>
+          <p class="mm-sub">{sub}</p>
+        </div>
+        <a class="mm-hd__va" href="{link[1]}" data-jump="{section_id}">{link[0]}</a>
+      </div>
+      <div class="mm-hd__scroll">{"".join(catalogue_card(c) for c in items)}
+      </div>
+      <div class="mm-hd__nav"><button class="mm-hd__nav-btn" type="button" data-dir="-1" aria-label="scroll left">←</button><button class="mm-hd__nav-btn" type="button" data-dir="1" aria-label="scroll right">→</button></div>
+    </section>'''
+
+
+def in_frame(f):
+    return [c for c in CATALOGUE if c["frame"] == f]
+
+
+def tagged(t):
+    return [c for c in CATALOGUE if t in c["tags"]]
+
+
 LANGS = ["എന്റെ സോക്സ്", "ನನ್ನ ಮೊಜೆಗಳು", "আমার মোজা", "Majhe Moje", "ਮੇਰੇ ਮੋਜ਼ੇ", "મારા મોજાં", "माझे मोजे"]
-STRIP = ["firsts", "ghar se", "becoming", "knitted by corbel", "storied by majhe moje", "bamboo &amp; cotton", "everyday, upgraded"]
+STRIP = ["everyday moje", "corbel × majhe moje", "firsts", "ghar se", "becoming", "bamboo &amp; cotton", "knitted by corbel"]
+
+SHOP_BY = [
+    ("bestsellers", "bestsellers", len(BESTSELLERS), "#E56412"),
+    ("stories", "the six stories", len(BUNDLES), "#441F03"),
+    ("firsts", "firsts", len(in_frame("firsts")), "#E56412"),
+    ("ghar-se", "ghar se", len(in_frame("ghar-se")), "#166349"),
+    ("becoming", "becoming", len(in_frame("becoming")), "#D9589F"),
+    ("for-her", "for her", len(tagged("her")), "#FF92CE"),
+    ("catalogue", "everything", len(CATALOGUE), "#441F03"),
+]
+shop_by = "".join(f'<a class="cx-tile-link" href="#{i}" style="--c:{c}"><b>{n}</b><span>{k} {"stories" if i == "stories" else "pairs" if i != "catalogue" else "products"}</span></a>' for i, n, k, c in SHOP_BY)
+
+CHIPS = [("all", "all"), ("sports", "sports"), ("office", "office &amp; formal"), ("casual", "casual &amp; colour"),
+         ("her", "for her"), ("him", "for him"), ("bamboo", "bamboo"), ("cotton", "cotton"),
+         ("firsts", "firsts"), ("ghar-se", "ghar se"), ("becoming", "becoming")]
+chips = "".join(f'<button class="cx-frame-pill{" is-on" if k == "all" else ""}" type="button" data-cat="{k}">{n} <small>{len(CATALOGUE) if k == "all" else sum(1 for c in CATALOGUE if k in c["tags"] or k == c["frame"])}</small></button>' for k, n in CHIPS)
 
 frame_pills = '<button class="cx-frame-pill is-on" type="button" data-filter="all" style="--c:#441F03"><i></i>all stories</button>' + "".join(
     f'<button class="cx-frame-pill" type="button" data-filter="{k}" style="--c:{c}"><i></i>{n}</button>' for k, (n, c) in FRAMES.items())
-
 which_links = "".join(f'<a href="#{b[0]}">{html.escape(b[1])}</a>' for b in BUNDLES)
+
+hero_tiles = [BY_HANDLE.get(h) for h in ["the-bamboo-signature-set", "the-cotton-earth-ochre-set", "corbel-bamboo-varsity-duo-pack-of-2",
+                                         "the-cotton-sundowner-set", "bamboo-active-crew-socks-pack-of-1"]]
+hero_tiles = "".join(f'<figure class="cx-fan cx-fan--{i}"><img src="{sized(c["img"], 500)}" alt=""></figure>' for i, c in enumerate(t for t in hero_tiles if t))
 
 page = f'''<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Corbel × Majhe Moje | Everyday Socks With a Story</title>
-  <meta name="description" content="Everyday socks by Corbel, chosen and storied by Majhe Moje. Firsts, ghar se and becoming: six story bundles for the days in between the drops.">
+  <title>Everyday Moje | Corbel × Majhe Moje</title>
+  <meta name="description" content="Everyday Moje: Corbel × Majhe Moje. {len(CATALOGUE)} everyday socks by Corbel, chosen and storied by Majhe Moje: bestsellers, six story bundles, firsts, ghar se, becoming and the full catalogue.">
   <link rel="stylesheet" href="assets/css/fonts.css">
   <link rel="stylesheet" href="assets/css/live.css">
   <link rel="stylesheet" href="assets/css/corbel.css">
@@ -193,48 +339,59 @@ page = f'''<!doctype html>
     <nav class="mm-nav-strip" aria-label="main">
       <a href="https://majhemoje.in/collections/drops">All Drops</a>
       <a href="https://majhemoje.in/#chapters">Chapters</a>
-      <a class="is-active" href="corbel.html" aria-current="page">Corbel <span class="x">×</span> Moje</a>
+      <a class="is-active" href="#top" aria-current="page">Everyday Moje</a>
       <a href="https://majhemoje.in/pages/our-mission">Our Story</a>
       <a href="https://majhemoje.in/pages/the-mark">The Mark</a>
       <a href="https://majhemoje.in/#studio">The Studio</a>
     </nav>
   </header>
 
-  <main>
+  <main id="top">
 
-    <section class="cx-hero">
-      <div class="cx-hero__inner">
-        <div>
-          <p class="cx-hero__lockup">Corbel <span>×</span> Majhe Moje</p>
-          <h1>everyday.<br><em>still moje.</em></h1>
-          <p class="cx-hero__body">Majhe moje means my socks, so they should show up on every day of your week, not just the drop days. Everyday essentials knitted by Corbel, chosen and storied by us. For your firsts, your ghar se moments, and whoever you&rsquo;re becoming.</p>
+    <!-- 1 · the creative -->
+    <section class="cx-poster">
+      <div class="cx-poster__inner">
+        <div class="cx-poster__text">
+          <p class="cx-poster__eyebrow">introducing <b>everyday moje</b></p>
+          <h1 class="cx-poster__lock">Corbel<span>×</span><br>Majhe Moje</h1>
+          <p class="cx-poster__body">Majhe moje means my socks, so they should show up on every day of your week, not just the drop days. {len(CATALOGUE)} everyday pairs knitted by Corbel, chosen and storied by us.</p>
           <div class="cx-hero__actions">
-            <a class="mm-btn mm-btn--orange" href="#stories">shop the stories →</a>
-            <a class="mm-btn mm-btn--ghost" href="#how">how it works</a>
+            <a class="mm-btn mm-btn--orange" href="#bestsellers">shop bestsellers →</a>
+            <a class="mm-btn mm-btn--ghost" href="#stories">the six stories</a>
           </div>
           <p class="cx-hero__hand">chapters for the drops. these for the days in between ↷</p>
         </div>
-        <div class="cx-hero__stack" aria-hidden="true">
-          <figure class="cx-tile cx-tile--a"><img src="{img_url("professional")}" alt=""><figcaption>first salary</figcaption></figure>
-          <figure class="cx-tile cx-tile--b"><img src="{img_url("varsity")}" alt=""><figcaption>the rotation</figcaption></figure>
-          <figure class="cx-tile cx-tile--c"><img src="{img_url("ochre_m")}" alt=""><figcaption>sunday chai</figcaption></figure>
-        </div>
+        <div class="cx-poster__fan" aria-hidden="true">{hero_tiles}<span class="cx-poster__x">×</span></div>
       </div>
+      <ul class="cx-poster__facts">
+        <li><b>{len(CATALOGUE)}</b>everyday pairs</li>
+        <li><b>bamboo</b>&amp; long-staple cotton</li>
+        <li><b>48 hrs</b>to dispatch</li>
+        <li><b>made</b>in india</li>
+      </ul>
     </section>
 
     {marquee(STRIP)}
 
+    <!-- shop by -->
+    <nav class="cx-shopby" aria-label="shop everyday moje by">{shop_by}</nav>
+
+    <!-- 2 · bestsellers -->
+    {carousel("bestsellers", "bestsellers · corbel × moje", "start with the favourites.", "The pairs people come back for. A good first everyday moje.", BESTSELLERS)}
+
+    <!-- 3 · the six stories -->
     <section class="cx-stories" id="stories">
       <div class="cx-stories__head">
-        <p class="mm-eyebrow">six stories · corbel × moje</p>
+        <p class="mm-eyebrow">the six stories · only on majhe moje</p>
         <h2 class="mm-title">the everyday stories.</h2>
-        <p class="mm-sub">Each one is a bundle we put together from Corbel&rsquo;s best everyday pairs, with a story card inside. Only here.</p>
+        <p class="mm-sub">Bundles we put together from Corbel&rsquo;s best everyday pairs, each with a story card inside.</p>
       </div>
       <div class="cx-frames" role="group" aria-label="filter stories">{frame_pills}</div>
       <div class="cx-grid">{"".join(bundle_card(b) for b in BUNDLES)}
       </div>
     </section>
 
+    <!-- 4 · three kinds of everyday -->
     <section class="mm-manifesto">
       <span class="mm-manifesto__deco" aria-hidden="true">×</span>
       <div class="mm-manifesto__inner">
@@ -244,29 +401,40 @@ page = f'''<!doctype html>
           <span class="mm-manifesto__attr">— the studio</span>
         </div>
         <div class="mm-manifesto__values mm-reveal">
-          <div class="mm-manifesto__value"><p class="mm-manifesto__value-word">firsts</p><p class="mm-manifesto__value-sub">first salary, first fit pic, first flat. the ones you&rsquo;ll brag about later.</p></div>
-          <div class="mm-manifesto__value"><p class="mm-manifesto__value-word">ghar se</p><p class="mm-manifesto__value-sub">sunday chai, the bag mom packed. home, wherever you&rsquo;re wearing it.</p></div>
-          <div class="mm-manifesto__value"><p class="mm-manifesto__value-word">becoming</p><p class="mm-manifesto__value-sub">6 a.m. runs, the growing shoe rack. whoever you&rsquo;re turning into.</p></div>
-          <div class="mm-manifesto__value"><p class="mm-manifesto__value-word">knitted</p><p class="mm-manifesto__value-sub">by corbel, in bamboo &amp; cotton. storied by us.</p></div>
+          <a class="mm-manifesto__value" href="#firsts"><p class="mm-manifesto__value-word">firsts</p><p class="mm-manifesto__value-sub">first job, first interview, first flat. {len(in_frame("firsts"))} pairs that dress up.</p></a>
+          <a class="mm-manifesto__value" href="#ghar-se"><p class="mm-manifesto__value-word">ghar se</p><p class="mm-manifesto__value-sub">sunday chai, the bag mom packed. {len(in_frame("ghar-se"))} pairs for easy days.</p></a>
+          <a class="mm-manifesto__value" href="#becoming"><p class="mm-manifesto__value-word">becoming</p><p class="mm-manifesto__value-sub">6 a.m. runs, pilates, the turf. {len(in_frame("becoming"))} pairs that move.</p></a>
+          <a class="mm-manifesto__value" href="#catalogue"><p class="mm-manifesto__value-word">everything</p><p class="mm-manifesto__value-sub">all {len(CATALOGUE)} pairs, knitted by corbel in bamboo &amp; cotton.</p></a>
         </div>
       </div>
     </section>
 
-    <section class="mm-hd" id="shelf" style="padding-top:56px">
-      <div class="mm-hd__head">
-        <h2 class="mm-title">the everyday shelf.</h2>
-        <a class="mm-hd__va" href="#stories">see the stories →</a>
+    <!-- 5 · story frames -->
+    {carousel("firsts", "firsts", "for the first job, and every one after.", "Office crews and formal sets in bamboo and cotton. The grown-up drawer, sorted.", in_frame("firsts"), "#E56412")}
+    {carousel("ghar-se", "ghar se", "for the days that feel like home.", "Colour, pattern and soft cotton for Sundays, chai and doing nothing at all.", in_frame("ghar-se"), "#166349")}
+    {carousel("becoming", "becoming", "for whoever you&rsquo;re turning into.", "Sports, pilates, biker and football pairs. Built for the 6 a.m. version of you.", in_frame("becoming"), "#D9589F")}
+    {carousel("for-her", "for her", "for her, every day.", "Edits for women across formal, casual and colour.", tagged("her"), "#E0559E")}
+
+    <!-- 6 · the full catalogue -->
+    <section class="cx-cat" id="catalogue">
+      <div class="cx-stories__head">
+        <p class="mm-eyebrow">the full catalogue</p>
+        <h2 class="mm-title">every everyday moje.</h2>
+        <p class="mm-sub">All {len(CATALOGUE)} pairs from Corbel, at Corbel&rsquo;s own prices. Filter by what your day needs.</p>
       </div>
-      <div class="mm-hd__scroll">{"".join(single_card(k) for k in SINGLES)}
+      <div class="cx-frames cx-cat__chips" role="group" aria-label="filter the catalogue">{chips}</div>
+      <p class="cx-cat__count" role="status"><b id="cat-count">{len(CATALOGUE)}</b> pairs</p>
+      <div class="cx-cat__grid">{"".join(catalogue_card(c, "mm-hd__card cx-cat-card") for c in CATALOGUE)}
       </div>
     </section>
 
+    <!-- 7 · how it works -->
     <section class="cx-how" id="how">
       <div class="cx-how__inner">
         <p class="mm-eyebrow">how it works</p>
         <h2 class="mm-title">chosen by us. knitted by corbel.</h2>
         <ol class="cx-how__steps">
-          <li><h3>we pick</h3><p>We choose the pairs from Corbel that earn a place in a story. Most don&rsquo;t make the cut.</p></li>
+          <li><h3>we pick</h3><p>We choose the Corbel pairs that earn a place on the everyday shelf, and build the stories around them.</p></li>
           <li><h3>corbel knits &amp; ships</h3><p>Straight from Corbel, packed with our story card, usually out in 48 hours.</p></li>
           <li><h3>you scan</h3><p>The card&rsquo;s QR shows your story, how to size and care for your pairs, and a code for next time.</p></li>
           <li><h3>you tell us</h3><p>Rate your pair. Your reviews decide which stories stay on the shelf.</p></li>
@@ -274,6 +442,7 @@ page = f'''<!doctype html>
       </div>
     </section>
 
+    <!-- 8 · found a card? (QR landing) -->
     <section class="cx-card" id="card">
       <div class="cx-card__inner">
         <div class="cx-card__visual" aria-hidden="true">
@@ -283,11 +452,11 @@ page = f'''<!doctype html>
         <div>
           <p class="mm-eyebrow">found a card in your box?</p>
           <h2 class="mm-title">hi. you&rsquo;ve got moje.</h2>
-          <p class="mm-sub">Thanks for picking one of our everyday stories. Here&rsquo;s everything the card promised.</p>
+          <p class="mm-sub">Thanks for picking everyday moje. Here&rsquo;s everything the card promised.</p>
           <div class="cx-card__actions">
             <a class="cx-card__action" href="https://majhemoje.in/pages/reviews"><b>rate your pair →</b><span>two taps, and it really does decide what stays.</span></a>
             <a class="cx-card__action" href="#how"><b>size &amp; care →</b><span>cold wash, inside out, dry in the shade.</span></a>
-            <a class="cx-card__action" href="#stories"><b>go again →</b><span>the other five stories are right here.</span></a>
+            <a class="cx-card__action" href="#catalogue"><b>go again →</b><span>{len(CATALOGUE)} more pairs, right here.</span></a>
           </div>
           <div class="cx-code"><b>MOREMOJE</b><span>10% off your next order<br>at majhemoje.in</span></div>
           <div class="cx-card__which"><p>which story came home with you?</p><div>{which_links}</div></div>
@@ -297,13 +466,13 @@ page = f'''<!doctype html>
 
     <section class="cx-credit">
       <p class="cx-credit__lock">Corbel <span>×</span> Majhe Moje</p>
-      <p>Knitted by Corbel, an Indian sock maker working in bamboo and cotton. Chosen, bundled and storied by the Majhe Moje studio, Mumbai. Chapters stay ours alone; this shelf is where we meet.</p>
+      <p>Everyday Moje is knitted by Corbel, an Indian sock maker working in bamboo and cotton, and chosen, bundled and storied by the Majhe Moje studio, Mumbai. Chapters stay ours alone; this shelf is where we meet.</p>
     </section>
 
   </main>
 
   <footer class="mm-footer">
-    {marquee(["your moje, your story", "corbel × majhe moje", "everyday, still moje"])}
+    {marquee(["your moje, your story", "everyday moje", "corbel × majhe moje"])}
     <div class="mm-footer__main">
       <div class="mm-footer__brand">
         <img class="mm-footer__logo" src="assets/img/mm-logo.png" alt="Majhe Moje">
@@ -311,11 +480,11 @@ page = f'''<!doctype html>
         <p class="mm-footer__contact"><a href="mailto:studio@majhemoje.in">studio@majhemoje.in</a><br><a href="tel:+919513373052">+91 95133 73052</a></p>
         <p class="mm-footer__est">est. 2025 · mumbai</p>
       </div>
-      <div><p class="mm-footer__col-head">the drop</p><a class="mm-footer__link" href="https://majhemoje.in/collections/drops">current</a><a class="mm-footer__link" href="corbel.html">corbel × moje</a><a class="mm-footer__link" href="https://majhemoje.in/pages/size-guide">size guide</a></div>
+      <div><p class="mm-footer__col-head">the drop</p><a class="mm-footer__link" href="https://majhemoje.in/collections/drops">current</a><a class="mm-footer__link" href="#top">everyday moje</a><a class="mm-footer__link" href="https://majhemoje.in/pages/size-guide">size guide</a></div>
       <div><p class="mm-footer__col-head">studio</p><a class="mm-footer__link" href="https://majhemoje.in/#studio">custom socks</a><a class="mm-footer__link" href="https://majhemoje.in/#studio">past collabs</a><a class="mm-footer__link" href="mailto:studio@majhemoje.in">studio@majhemoje.in</a></div>
       <div><p class="mm-footer__col-head">the story</p><a class="mm-footer__link" href="https://majhemoje.in/pages/our-mission">origin</a><a class="mm-footer__link" href="https://majhemoje.in/pages/the-mark">the mark</a></div>
     </div>
-    <div class="mm-footer__bottom"><span>© majhe moje · corbel × majhe moje pairs are knitted and shipped by corbel</span><span>shipping · returns · privacy · terms</span></div>
+    <div class="mm-footer__bottom"><span>© majhe moje · everyday moje pairs are knitted and shipped by corbel</span><span>shipping · returns · privacy · terms</span></div>
   </footer>
 
   <div class="mm-hd-overlay" id="atc" aria-hidden="true">
@@ -338,5 +507,7 @@ page = f'''<!doctype html>
 </html>
 '''
 
-open("corbel.html", "w").write(page)
-print("corbel.html written:", len(BUNDLES), "bundles,", len(SINGLES), "singles")
+open("everyday.html", "w").write(page)
+print(f"everyday.html: {len(BESTSELLERS)} bestsellers, {len(BUNDLES)} stories, "
+      f"firsts {len(in_frame('firsts'))} / ghar se {len(in_frame('ghar-se'))} / becoming {len(in_frame('becoming'))}, "
+      f"for her {len(tagged('her'))}, catalogue {len(CATALOGUE)}")

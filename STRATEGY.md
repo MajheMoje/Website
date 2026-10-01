@@ -38,7 +38,7 @@ they evoke warmth, nostalgia or aspiration, not hardship:
 | | Agreed |
 |---|---|
 | Products | Corbel's **existing SKUs**; no new manufacturing |
-| Selling | **6 exclusive story bundles** (hero) + **8 singles**, from 19 Corbel SKUs |
+| Selling | **Bestsellers** (Corbel's featured six), **6 exclusive story bundles**, and the **full catalogue** of 66 Corbel products |
 | Fulfilment | **Corbel dropships** in its own pack, with our insert card |
 | Money | Customer pays Majhe Moje; **60% to Corbel / 40% to Majhe Moje** of net sale |
 | Pricing | Singles at **Corbel's listed price** (parity); bundles priced by us below the sum of parts; **"% off" badges** match the live site |
@@ -53,10 +53,10 @@ where our story adds the most value.
 
 ## 5. On the site
 
-A **"Corbel × Moje" item in the main nav** and its own page, built from the
+An **"Everyday Moje" item in the main nav** and its own page, opening with a Corbel × Majhe Moje creative and layered as: bestsellers → the six stories → Firsts / Ghar se / Becoming / For her shelves → the full filterable catalogue (66 products). It's, built from the
 live theme's existing components: language marquee, green header, brown nav
 strip, drops cards with round badges, the manifesto band and the footer. Plus
-a strip on the homepage. Prototype: [`corbel.html`](corbel.html).
+a strip on the homepage. Prototype: [`everyday.html`](everyday.html).
 
 **Images:** Corbel's product photos, AI-restyled into our look (with Corbel's
 written permission). The restyle must never change the product itself. Until
@@ -68,7 +68,7 @@ caption bar in CSS.
 One **universal** A6 card for every order ([`card.html`](card.html)):
 - **Front:** "hi. you've got moje." plus a QR code for the story, ratings and the site.
 - **Back:** size, care, a *tick your story* list, and the **MOREMOJE** next-order code.
-- The QR opens the page's *found a card?* section (`/pages/corbel-x-majhe-moje?src=card#card`),
+- The QR opens the page's *found a card?* section (`/pages/everyday-moje?src=card#card`),
   so it works for every product and can be tracked in analytics. This is the deck's
   "Trojan horse" loop: Corbel's parcel becomes our CRM entry point.
 
@@ -87,4 +87,4 @@ one-page term sheet ([`termsheet.html`](termsheet.html)). Our asks:
 - The size ranges per SKU (the card says UK 6–10 as a placeholder).
 - Whether payment-gateway fees are shared 60/40.
 - The order hand-off format (shared sheet or Shopify app).
-- Create the `corbel-x-majhe-moje` page and the MOREMOJE discount in Shopify.
+- Create the `everyday-moje` page and the MOREMOJE discount in Shopify.
