@@ -53,7 +53,7 @@ where our story adds the most value.
 
 ## 5. On the site
 
-An **"Everyday Moje" item in the main nav** and its own page, opening with a Corbel × Majhe Moje creative and layered as: bestsellers → the six stories → Firsts / Ghar se / Becoming / For her shelves → the full filterable catalogue (66 products). It's, built from the
+An **"Everyday Moje" item in the main nav** and its own page, opening with a Corbel × Majhe Moje creative and layered as: bestsellers → the six stories → Firsts / Ghar se / Becoming / For her shelves → the full filterable catalogue (66 products). It's built from the
 live theme's existing components: language marquee, green header, brown nav
 strip, drops cards with round badges, the manifesto band and the footer. Plus
 a strip on the homepage. Prototype: [`everyday.html`](everyday.html).
